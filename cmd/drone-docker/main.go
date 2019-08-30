@@ -223,6 +223,11 @@ func main() {
 			Usage:  "do not use cached intermediate containers",
 			EnvVar: "PLUGIN_NO_CACHE",
 		},
+		cli.StringFlag{
+			Name:   "module.name",
+			Usage:  "git update package name",
+			EnvVar: "PLUGIN_MODNAME",
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -232,6 +237,7 @@ func main() {
 
 func run(c *cli.Context) error {
 	plugin := docker.Plugin{
+		Modname: c.String("module.name"),
 		Dryrun:  c.Bool("dry-run"),
 		Cleanup: c.BoolT("docker.purge"),
 		Login: docker.Login{

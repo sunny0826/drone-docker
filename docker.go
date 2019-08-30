@@ -62,11 +62,15 @@ type (
 		Daemon  Daemon // Docker daemon configuration
 		Dryrun  bool   // Docker push is skipped
 		Cleanup bool   // Docker purge is enabled
+		Modname string // Git update package name
 	}
 )
 
 // Exec executes the plugin step
 func (p Plugin) Exec() error {
+	// check git module name
+	checkModuleNmae(p.Modname)
+
 	// start the Docker daemon server
 	if !p.Daemon.Disabled {
 		cmd := commandDaemon(p.Daemon)
@@ -156,6 +160,32 @@ func (p Plugin) Exec() error {
 
 const dockerExe = "/usr/local/bin/docker"
 const dockerdExe = "/usr/local/bin/dockerd"
+
+func checkModuleNmae(name string) {
+	//读取文件
+	b, err := ioutil.ReadFile("git.txt")
+	if err != nil {
+		fmt.Println("+ ioutil ReadFile error: ", err)
+	}
+	if b == nil {
+		fmt.Println("+ skip module package check")
+	}else {
+		modname := strings.Split(string(b), ",")
+		var whether bool
+		for _,mod := range modname{
+			if mod == name {
+				whether = true
+				continue
+			}
+		}
+		if whether {
+			fmt.Println("+ continue")
+		}else {
+			fmt.Println("+ No matching name,jump step")
+			os.Exit(1)
+		}
+	}
+}
 
 // helper function to create the docker login command.
 func commandLogin(login Login) *exec.Cmd {
@@ -318,22 +348,21 @@ func commandPush(build Build, tag string) *exec.Cmd {
 	after := []byte(target)
 	//将指定内容写入到文件中
 
-	if fil,err := ioutil.ReadFile("repo.txt");err == nil {
-		before := strings.Replace(string(fil),"\n","",1)
+	if fil, err := ioutil.ReadFile("repo.txt"); err == nil {
+		before := strings.Replace(string(fil), "\n", "", 1)
 		fmt.Println(before)
-		content := []byte(fmt.Sprintf("%s,%s",before,after))
+		content := []byte(fmt.Sprintf("%s,%s", before, after))
 		err := ioutil.WriteFile("repo.txt", content, 0666)
 		if err != nil {
 			fmt.Println("ioutil WriteFile error: ", err)
 		}
-	}else {
+	} else {
 		err := ioutil.WriteFile("repo.txt", after, 0666)
 		if err != nil {
 			fmt.Println("ioutil WriteFile error: ", err)
 		}
 	}
 
-	
 	return exec.Command(dockerExe, "push", target)
 }
 
