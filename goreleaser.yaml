@@ -2,6 +2,8 @@
 builds:
   - env:
       - CGO_ENABLED=0
+    main: ./cmd/drone-docker/main.go
+    binary: drone-docker
 archives:
   - replacements:
       darwin: Darwin
