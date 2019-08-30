@@ -69,7 +69,9 @@ type (
 // Exec executes the plugin step
 func (p Plugin) Exec() error {
 	// check git module name
-	checkModuleNmae(p.Modname)
+	if checkModuleNmae(p.Modname) {
+		return nil
+	}
 
 	// start the Docker daemon server
 	if !p.Daemon.Disabled {
@@ -161,7 +163,7 @@ func (p Plugin) Exec() error {
 const dockerExe = "/usr/local/bin/docker"
 const dockerdExe = "/usr/local/bin/dockerd"
 
-func checkModuleNmae(name string) {
+func checkModuleNmae(name string) bool {
 	//读取文件
 	b, err := ioutil.ReadFile("git.txt")
 	if err != nil {
@@ -169,22 +171,24 @@ func checkModuleNmae(name string) {
 	}
 	if b == nil {
 		fmt.Println("+ skip module package check")
-	}else {
+	} else {
 		modname := strings.Split(string(b), ",")
 		var whether bool
-		for _,mod := range modname{
+		for _, mod := range modname {
 			if mod == name {
 				whether = true
 				continue
 			}
 		}
 		if whether {
-			fmt.Println("+ continue")
-		}else {
+			fmt.Printf("+ Name matching succeeded， %s continue", name)
+			return false
+		} else {
 			fmt.Println("+ No matching name,jump step")
-			os.Exit(1)
+			return true
 		}
 	}
+	return false
 }
 
 // helper function to create the docker login command.
