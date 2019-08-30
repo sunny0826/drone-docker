@@ -68,3 +68,21 @@ docker run --rm \
   --privileged \
   plugins/docker --dry-run
 ```
+
+```yaml
+- name: build docker  
+  image: guoxudongdocker/drone-docker
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+  settings:
+    username: 
+      from_secret: docker_user
+    password: 
+      from_secret: docker_pass
+    repo: registry-vpc.cn-shanghai.aliyuncs.com/keking/drone-test
+    registry: registry-vpc.cn-shanghai.aliyuncs.com
+    dockerfile: Dockerfile
+    tags: ${DRONE_BUILD_NUMBER}
+
+```
