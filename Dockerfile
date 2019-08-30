@@ -7,7 +7,8 @@ COPY . /build/
 
 WORKDIR /build
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    && go build -v -a -tags netgo -o drone-docker ./cmd/drone-docker
 
 # run step
 FROM docker:18.09-dind
@@ -15,4 +16,4 @@ FROM docker:18.09-dind
 # copy bin from build step
 COPY --from=builder /build/drone-docker /bin/
 
-ENTRYPOINT ["/bin/drone-docker"]
+ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh", "/bin/drone-docker"]
