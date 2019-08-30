@@ -167,10 +167,10 @@ func checkModuleNmae(name string) bool {
 	//读取文件
 	b, err := ioutil.ReadFile("git.txt")
 	if err != nil {
-		fmt.Println("+ ioutil ReadFile error: ", err)
+		fmt.Println("+ ioutil ReadFile error: %s\n", err)
 	}
 	if b == nil {
-		fmt.Println("+ skip module package check")
+		fmt.Println("+ skip module package check\n")
 	} else {
 		modname := strings.Split(string(b), ",")
 		var whether bool
@@ -181,10 +181,10 @@ func checkModuleNmae(name string) bool {
 			}
 		}
 		if whether {
-			fmt.Printf("+ Name matching succeeded， %s continue", name)
+			fmt.Printf("+ Name matching succeeded,%s continue\n", name)
 			return false
 		} else {
-			fmt.Println("+ No matching name,jump step")
+			fmt.Println("+ No matching name,jump step\n")
 			return true
 		}
 	}
@@ -358,12 +358,12 @@ func commandPush(build Build, tag string) *exec.Cmd {
 		content := []byte(fmt.Sprintf("%s,%s", before, after))
 		err := ioutil.WriteFile("repo.txt", content, 0666)
 		if err != nil {
-			fmt.Println("ioutil WriteFile error: ", err)
+			fmt.Println("ioutil WriteFile error: %s\n", err)
 		}
 	} else {
 		err := ioutil.WriteFile("repo.txt", after, 0666)
 		if err != nil {
-			fmt.Println("ioutil WriteFile error: ", err)
+			fmt.Println("ioutil WriteFile error: %s\n", err)
 		}
 	}
 
