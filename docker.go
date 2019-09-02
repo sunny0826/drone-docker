@@ -445,9 +445,9 @@ func commandPrune() *exec.Cmd {
 	return exec.Command(dockerExe, "system", "prune", "-f")
 }
 
-func commandRmi(tag string) *exec.Cmd {
-	return exec.Command(dockerExe, "rmi", tag)
-}
+//func commandRmi(tag string) *exec.Cmd {
+//	return exec.Command(dockerExe, "rmi", tag)
+//}
 
 // trace writes each command to stdout with the command wrapped in an xml
 // tag so that it can be extracted and displayed in the logs.
