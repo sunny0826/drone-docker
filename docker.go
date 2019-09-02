@@ -147,7 +147,7 @@ func (p Plugin) Exec() error {
 	}
 
 	if p.Cleanup {
-		cmds = append(cmds, commandRmi(p.Build.Name)) // docker rmi
+		//cmds = append(cmds, commandRmi(p.Build.Name)) // docker rmi
 		cmds = append(cmds, commandPrune())           // docker system prune -f
 	}
 
