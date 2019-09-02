@@ -2,7 +2,9 @@ package docker
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -63,6 +65,12 @@ type (
 		Dryrun  bool   // Docker push is skipped
 		Cleanup bool   // Docker purge is enabled
 		Modname string // Git update package name
+	}
+
+	Envfile struct {
+		ConfigPkg string   `yaml:"configPkg"`
+		CheckList []string `yaml:"checkList"`
+		ImageList []string `yaml:"imageList"`
 	}
 )
 
@@ -163,16 +171,42 @@ func (p Plugin) Exec() error {
 const dockerExe = "/usr/local/bin/docker"
 const dockerdExe = "/usr/local/bin/dockerd"
 
-func checkModuleNmae(name string) bool {
-	//读取文件
-	b, err := ioutil.ReadFile("git.txt")
+func (c *Envfile) ReadYaml(f string) {
+	buffer, err := ioutil.ReadFile(f)
 	if err != nil {
-		fmt.Println("+ ioutil ReadFile error: %s\n", err)
+		log.Fatalf(err.Error())
 	}
-	if b == nil {
+	err = yaml.Unmarshal(buffer, &c)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+}
+
+func (c *Envfile) WriteYaml() {
+	buffer, err := yaml.Marshal(&c)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	err = ioutil.WriteFile("./env.yaml", buffer, 0777)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+}
+
+func checkModuleNmae(name string) bool {
+	envfile := Envfile{}
+	envfile.ReadYaml("./env.yaml")
+
+	//读取文件
+	//b, err := ioutil.ReadFile("git.txt")
+	//if err != nil {
+	//	fmt.Println("+ ioutil ReadFile error: %s\n", err)
+	//}
+	if envfile.CheckList == nil {
 		fmt.Println("+ skip module package check\n")
 	} else {
-		modname := strings.Split(string(b), ",")
+		//modname := strings.Split(string(b), ",")
+		modname := envfile.CheckList
 		var whether bool
 		for _, mod := range modname {
 			if mod == name {
@@ -349,24 +383,27 @@ func commandTag(build Build, tag string) *exec.Cmd {
 // helper function to create the docker push command.
 func commandPush(build Build, tag string) *exec.Cmd {
 	target := fmt.Sprintf("%s:%s", build.Repo, tag)
-	after := []byte(target)
-	//将指定内容写入到文件中
+	envfile := Envfile{}
+	envfile.ReadYaml("./env.yaml")
+	envfile.ImageList = append(envfile.ImageList,target)
+	envfile.ReadYaml("./env.yaml")
 
-	if fil, err := ioutil.ReadFile("repo.txt"); err == nil {
-		before := strings.Replace(string(fil), "\n", "", 1)
-		fmt.Println(before)
-		content := []byte(fmt.Sprintf("%s,%s", before, after))
-		err := ioutil.WriteFile("repo.txt", content, 0666)
-		if err != nil {
-			fmt.Println("ioutil WriteFile error: %s\n", err)
-		}
-	} else {
-		err := ioutil.WriteFile("repo.txt", after, 0666)
-		if err != nil {
-			fmt.Println("ioutil WriteFile error: %s\n", err)
-		}
-	}
-
+	//after := []byte(target)
+	////将指定内容写入到文件中
+	//if fil, err := ioutil.ReadFile("repo.txt"); err == nil {
+	//	before := strings.Replace(string(fil), "\n", "", 1)
+	//	fmt.Println(before)
+	//	content := []byte(fmt.Sprintf("%s,%s", before, after))
+	//	err := ioutil.WriteFile("repo.txt", content, 0666)
+	//	if err != nil {
+	//		fmt.Println("ioutil WriteFile error: %s\n", err)
+	//	}
+	//} else {
+	//	err := ioutil.WriteFile("repo.txt", after, 0666)
+	//	if err != nil {
+	//		fmt.Println("ioutil WriteFile error: %s\n", err)
+	//	}
+	//}
 	return exec.Command(dockerExe, "push", target)
 }
 
