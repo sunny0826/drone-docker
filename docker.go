@@ -202,7 +202,7 @@ func checkModuleNmae(name string) bool {
 	//if err != nil {
 	//	fmt.Println("+ ioutil ReadFile error: %s\n", err)
 	//}
-	if envfile.CheckList == nil {
+	if len(envfile.CheckList) == 0 {
 		fmt.Println("+ skip module package check\n")
 	} else {
 		//modname := strings.Split(string(b), ",")

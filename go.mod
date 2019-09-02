@@ -8,7 +8,7 @@ require (
 	github.com/urfave/cli v1.20.0
 	golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e // indirect
 	golang.org/x/text v0.3.0 // indirect
-	gopkg.in/yaml.v2 v2.2.2 // indirect
+	gopkg.in/yaml.v2 v2.2.2
 )
 
 replace github.com/urfave/cli => github.com/bradrydzewski/cli v0.0.0-20190108225652-0d51abd87c77
