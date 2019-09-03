@@ -148,7 +148,7 @@ func (p Plugin) Exec() error {
 
 	if p.Cleanup {
 		//cmds = append(cmds, commandRmi(p.Build.Name)) // docker rmi
-		cmds = append(cmds, commandPrune())           // docker system prune -f
+		cmds = append(cmds, commandPrune()) // docker system prune -f
 	}
 
 	// execute all commands in batch mode.
@@ -193,7 +193,7 @@ func (c *Envfile) WriteYaml() {
 	}
 }
 
-func (p *Plugin)checkModuleNmae(name string) bool {
+func (p *Plugin) checkModuleNmae(name string) bool {
 	envfile := Envfile{}
 	envfile.ReadYaml("./env.yaml")
 
@@ -379,7 +379,7 @@ func commandPush(build Build, tag string) *exec.Cmd {
 	target := fmt.Sprintf("%s:%s", build.Repo, tag)
 	envfile := Envfile{}
 	envfile.ReadYaml("./env.yaml")
-	envfile.ImageList = append(envfile.ImageList,target)
+	envfile.ImageList = append(envfile.ImageList, target)
 	envfile.WriteYaml()
 
 	//after := []byte(target)
