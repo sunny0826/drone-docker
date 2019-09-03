@@ -77,7 +77,7 @@ type (
 // Exec executes the plugin step
 func (p Plugin) Exec() error {
 	// check git module name
-	if checkModuleNmae(p.Modname) {
+	if p.checkModuleNmae(p.Modname) {
 		return nil
 	}
 
@@ -193,19 +193,13 @@ func (c *Envfile) WriteYaml() {
 	}
 }
 
-func checkModuleNmae(name string) bool {
+func (p *Plugin)checkModuleNmae(name string) bool {
 	envfile := Envfile{}
 	envfile.ReadYaml("./env.yaml")
 
-	//读取文件
-	//b, err := ioutil.ReadFile("git.txt")
-	//if err != nil {
-	//	fmt.Println("+ ioutil ReadFile error: %s\n", err)
-	//}
-	if len(envfile.CheckList) == 0 {
+	if p.Modname == "" {
 		fmt.Println("+ skip module package check\n")
 	} else {
-		//modname := strings.Split(string(b), ",")
 		modname := envfile.CheckList
 		var whether bool
 		for _, mod := range modname {
