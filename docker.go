@@ -386,7 +386,7 @@ func commandPush(build Build, tag string) *exec.Cmd {
 	envfile := Envfile{}
 	envfile.ReadYaml("./env.yaml")
 	envfile.ImageList = append(envfile.ImageList,target)
-	envfile.ReadYaml("./env.yaml")
+	envfile.WriteYaml()
 
 	//after := []byte(target)
 	////将指定内容写入到文件中
