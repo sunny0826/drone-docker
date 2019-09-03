@@ -215,7 +215,7 @@ func checkModuleNmae(name string) bool {
 			}
 		}
 		if whether {
-			fmt.Printf("+ Name matching succeeded, <<%s>> continue !\n", name)
+			fmt.Printf("+ Name matching succeeded, 「%s」 continue !\n", name)
 			return false
 		} else {
 			fmt.Println("+ No matching name,jump step\n")
