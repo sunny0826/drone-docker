@@ -173,6 +173,9 @@ const dockerdExe = "/usr/local/bin/dockerd"
 
 func (c *Envfile) ReadYaml(f string) {
 	buffer, err := ioutil.ReadFile(f)
+	if buffer == nil {
+		return
+	}
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -198,7 +201,7 @@ func (p *Plugin) checkModuleNmae(name string) bool {
 	envfile.ReadYaml("./env.yaml")
 
 	if p.Modname == "" {
-		fmt.Println("+ skip module package check\n")
+		fmt.Println("+ skip module package check")
 	} else {
 		modname := envfile.CheckList
 		var whether bool
@@ -212,7 +215,7 @@ func (p *Plugin) checkModuleNmae(name string) bool {
 			fmt.Printf("+ Name matching succeeded, 「%s」 continue !\n", name)
 			return false
 		} else {
-			fmt.Println("+ No matching name,jump step\n")
+			fmt.Println("+ No matching name,jump step")
 			return true
 		}
 	}

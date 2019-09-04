@@ -15,7 +15,7 @@ func TestPlugin_Read(t *testing.T) {
 	if err != nil {
 		fmt.Println("ioutil ReadFile error: ", err)
 	}
-	if string(b) == ""{
+	if string(b) == "" {
 
 	}
 	fmt.Println(strings.Split(string(b), ","))
@@ -340,26 +340,6 @@ func Test_commandPrune(t *testing.T) {
 	}
 }
 
-func Test_commandRmi(t *testing.T) {
-	type args struct {
-		tag string
-	}
-	tests := []struct {
-		name string
-		args args
-		want *exec.Cmd
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := commandRmi(tt.args.tag); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("commandRmi() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_trace(t *testing.T) {
 	type args struct {
 		cmd *exec.Cmd
@@ -373,6 +353,47 @@ func Test_trace(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			trace(tt.args.cmd)
+		})
+	}
+}
+
+func TestPlugin_checkModuleNmae(t *testing.T) {
+	type fields struct {
+		Login   Login
+		Build   Build
+		Daemon  Daemon
+		Dryrun  bool
+		Cleanup bool
+		Modname string
+	}
+	type args struct {
+		name string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   bool
+	}{
+		{
+			name: "test",
+			fields: fields{
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &Plugin{
+				Login:   tt.fields.Login,
+				Build:   tt.fields.Build,
+				Daemon:  tt.fields.Daemon,
+				Dryrun:  tt.fields.Dryrun,
+				Cleanup: tt.fields.Cleanup,
+				Modname: tt.fields.Modname,
+			}
+			if got := p.checkModuleNmae(tt.args.name); got != tt.want {
+				t.Errorf("Plugin.checkModuleNmae() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
